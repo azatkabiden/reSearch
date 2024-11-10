@@ -1,0 +1,119 @@
+<!-- templates/profile.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ candidate.FИО }}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+</head>
+<body>
+
+    <!-- Навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Логотип" width="150">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'landing' %}active{% endif %}" href="/">
+                            <i class="bi bi-house me-1"></i> Главная
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+                            <i class="bi bi-search me-1"></i> Поиск
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'favorites' %}active{% endif %}" href="{{ url_for('favorites') }}">
+                            <i class="bi bi-star me-1"></i> Избранное
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'history' %}active{% endif %}" href="{{ url_for('history') }}">
+                            <i class="bi bi-clock-history me-1"></i> История
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Главный контент -->
+    <div class="container my-5 main-content">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="card-title"><i class="bi bi-person-fill me-2 text-success"></i>{{ candidate.FИО }}</h2>
+                    <button class="btn btn-outline-success" id="favorite-button" data-id="{{ candidate_id }}">
+                        {% if candidate_id in session.get('favorites', []) %}
+                            <i class="bi bi-star-fill me-1"></i> В избранном
+                        {% else %}
+                            <i class="bi bi-star-plus-fill me-1"></i> Добавить в избранное
+                        {% endif %}
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Категория образования:</strong> {{ candidate["Категория образования"] }}</p>
+                        <p><strong>Стаж работы:</strong> {{ candidate["Стаж работы (лет)"] }} лет</p>
+                        <p><strong>Пол:</strong> {{ candidate.Pol }}</p>
+                        <p><strong>Направление деятельности:</strong> {{ candidate["Направление деятельности"] }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Последняя должность:</strong> {{ candidate["Последняя должность"] }}</p>
+                        <p><strong>Владение языками:</strong> {{ candidate["Владение языками"] }}</p>
+                        <p><strong>График работы:</strong> {{ candidate["График работы"] }}</p>
+                        <p><strong>Заработная плата:</strong> {{ candidate["Заработная плата"] }}</p>
+                    </div>
+                </div>
+                <p><strong>Личностные качества:</strong> {{ candidate["Личностные качества"] }}</p>
+
+                <hr>
+
+                <h4><i class="bi bi-person-badge me-2 text-success"></i> Soft Skills</h4>
+                <ul>
+                    {% for skill in candidate["Soft Skills"].split(',') %}
+                        <li>{{ skill.strip() }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h4><i class="bi bi-tools me-2 text-success"></i> Hard Skills</h4>
+                <ul>
+                    {% for skill in candidate["Hard Skills"].split(',') %}
+                        <li>{{ skill.strip() }}</li>
+                    {% endfor %}
+                </ul>
+
+                {% if candidate["Сертификации"] %}
+                    <p><strong>Сертификации:</strong> {{ candidate["Сертификации"] }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="bg-white shadow-sm py-4 mt-auto">
+        <div class="container text-center">
+            <p class="mb-0">Developed by BONFIRE TEAM IN 2024: Aubakirov Askhat, Sherstobitov Alexander, Kabiden Azat</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS и зависимости -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
