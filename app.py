@@ -1,12 +1,21 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for, abort, g
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, abort, g, flash
+from werkzeug.utils import secure_filename
 import os
 import json
 from sentence_transformers import SentenceTransformer
 import numpy as np
-import time  # Импортируем модуль time для измерения времени
+import time
+from subprocess import Popen
 
 app = Flask(__name__)
 app.secret_key = 'bonfire.ltd'  # Замените на ваш секретный ключ
+
+# Разрешённые расширения файлов для загрузки резюме
+ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Инициализация модели
 print("Инициализация модели...")
@@ -15,6 +24,7 @@ print("Модель успешно инициализирована.")
 
 # Функция для загрузки и векторизации резюме
 def load_and_vectorize_resumes():
+    global resumes, resume_vectors
     start_time = time.time()  # Начало отсчёта времени
     print("Загрузка и векторизация резюме...")
     resumes = []
@@ -34,11 +44,12 @@ def load_and_vectorize_resumes():
     print(f"Загружено и векторизировано {len(resumes)} резюме.")
     end_time = time.time()  # Конец отсчёта времени
     elapsed_time = end_time - start_time
-    print(f"Векторизация резюме заняла {elapsed_time:.2f} секунд.")  # Вывод времени векторации
-    return resumes, resume_vectors
+    print(f"Векторизация резюме заняла {elapsed_time:.2f} секунд.")  # Вывод времени векторизации
 
 # Загрузка резюме и их векторов при запуске приложения
-resumes, resume_vectors = load_and_vectorize_resumes()
+resumes = []
+resume_vectors = []
+load_and_vectorize_resumes()
 
 # Функция для сохранения истории поиска
 def save_search_history(query, candidates):
@@ -204,8 +215,48 @@ def favorites():
                 })
         else:
             print(f"Файл кандидата с ID {candidate_id} не найден.")
-    
+
     return render_template('favorites.html', candidates=candidates)
+
+# Маршрут для загрузки резюме
+@app.route('/upload_resume', methods=['GET', 'POST'])
+def upload_resume():
+    if request.method == 'POST':
+        if 'resume' not in request.files:
+            flash('Файл не выбран.')
+            return redirect(request.url)
+        file = request.files['resume']
+        if file.filename == '':
+            flash('Файл не выбран.')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            upload_folder = os.path.join(app.root_path, 'uploads')
+            os.makedirs(upload_folder, exist_ok=True)
+            filepath = os.path.join(upload_folder, filename)
+            file.save(filepath)
+            flash('Резюме успешно загружено.')
+            return redirect(url_for('upload_resume'))
+        else:
+            flash('Недопустимый формат файла.')
+            return redirect(request.url)
+    return render_template('upload_resume.html')
+
+# Маршрут для обработки резюме
+@app.route('/process_resumes')
+def process_resumes_route():
+    try:
+        script_path = os.path.join(app.root_path, 'process_resumes.py')
+        # Используем Popen для запуска скрипта асинхронно
+        process = Popen(['python', script_path], cwd=app.root_path)
+        process.wait()  # Ждём завершения обработки
+        # Обновляем векторизацию
+        load_and_vectorize_resumes()
+        flash('Обработка резюме завершена и данные обновлены.')
+        return redirect(url_for('upload_resume'))
+    except Exception as e:
+        flash(f'Ошибка при обработке резюме: {e}')
+        return redirect(url_for('upload_resume'))
 
 if __name__ == '__main__':
     app.run(debug=True)
