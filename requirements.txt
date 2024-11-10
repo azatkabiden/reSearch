@@ -2,3 +2,15 @@ Flask
 flask-cors
 numpy
 sentence_transformers
+PyMuPDF
+pytesseract
+python-docx
+chardet
+spacy
+nltk
+natasha
+opencv-python
+numpy
+tqdm
+pymorphy2
+pymorphy2-dicts
