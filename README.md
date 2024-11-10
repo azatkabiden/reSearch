@@ -220,8 +220,6 @@ hr-candidate-search/
 │   └── ... (uploaded resumes in PDF, DOCX, TXT formats)
 ├── extracted_texts/
 │   └── ... (extracted text from resumes)
-├── logs/
-│   └── processing.log
 ├── templates/
 │   ├── landing.html
 │   ├── index.html
