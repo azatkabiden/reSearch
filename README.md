@@ -84,7 +84,7 @@ Follow the steps below to set up and run the HR Candidate Search Platform on you
 4. **Prepare Candidate Data**
 
    Ensure that the `data/candidates/` directory contains JSON files for each candidate, named in the format `candidate{id}.json` (e.g., `candidate1.json`, `candidate2.json`, etc.).
-   If your resumes are in PDF, DOCX, or TXT format, first process them using open-source LLM (in our case, it is llama3.2).
+   If your resumes are in PDF, DOCX, or TXT format, first process them using NLP library with machine learning and deep learning techniques (in our case, it is spaCy, ru_core_news_lg model).
 
    **Example `candidate1.json`:**
 
