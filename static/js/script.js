@@ -1,4 +1,5 @@
 // static/js/script.js
+
 document.addEventListener('DOMContentLoaded', () => {
     // Обработчик кнопки "Найти"
     const searchButton = document.getElementById('search-button');
@@ -91,10 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const nameDiv = document.createElement('div');
             nameDiv.className = 'd-flex align-items-center';
 
+            // Изменение ссылки на кнопку для открытия модального окна
             const h5 = document.createElement('h5');
             h5.className = 'mb-1 me-3';
             h5.style.fontSize = '1.25rem';
-            h5.innerHTML = `<a href="/profile/${candidate.id}" target="_blank"><i class="bi bi-person me-2 text-success"></i>${candidate.FИО}</a>`;
+            h5.innerHTML = `
+                <button class="btn btn-link p-0 view-profile-btn" data-id="${candidate.id}">
+                    <i class="bi bi-person me-2 text-success"></i>${candidate.FИО}
+                </button>
+            `;
 
             // Создаём бейдж с процентом совпадения
             const scoreBadge = document.createElement('span');
@@ -206,6 +212,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn('Кнопка избранного на профиле не содержит data-id');
             }
         }
+
+        // Обработка кнопок просмотра профиля
+        if (target.closest('.view-profile-btn')) {
+            const button = target.closest('.view-profile-btn');
+            const candidateId = button.getAttribute('data-id');
+            if (candidateId) {
+                console.log(`Открытие профиля кандидата: ID = ${candidateId}`);
+                openProfileModal(candidateId);
+            } else {
+                console.warn('Кнопка просмотра профиля не содержит data-id');
+            }
+        }
     });
 
     // Функция добавления кандидата в избранное
@@ -303,5 +321,48 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             removeFavorite(candidateId, button);
         }
+    }
+
+    // Функция для открытия профиля кандидата в модальном окне
+    function openProfileModal(candidateId) {
+        // Показываем оверлей загрузки
+        loadingOverlay.classList.remove('d-none');
+
+        // Отправляем запрос на сервер для получения профиля
+        fetch(`/profile/${candidateId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Сетевая ошибка при получении профиля.');
+                }
+                return response.text();
+            })
+            .then(html => {
+                // Вставляем полученный HTML в тело модального окна
+                $('#profileModalBody').html(html);
+                // Показываем модальное окно
+                let profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
+                profileModal.show();
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке профиля:', error);
+                alert('Произошла ошибка при загрузке профиля кандидата.');
+            })
+            .finally(() => {
+                // Скрываем оверлей загрузки
+                loadingOverlay.classList.add('d-none');
+            });
+    }
+
+    // Автоматическое расширение textarea
+    const textarea = document.querySelector('.auto-resize');
+
+    if (textarea) {
+        textarea.addEventListener('input', autoResize, false);
+        window.addEventListener('load', autoResize, false); // Расширение при загрузке страницы, если в textarea есть текст
+    }
+
+    function autoResize() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
     }
 });
