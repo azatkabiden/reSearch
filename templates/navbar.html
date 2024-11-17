@@ -1,0 +1,45 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('landing') }}">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Логотип" width="150">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <!-- Главная страница -->
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'landing' %}active{% endif %}" href="{{ url_for('landing') }}">
+                        <i class="bi bi-house me-1"></i> Главная
+                    </a>
+                </li>
+                <!-- Страница поиска -->
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+                        <i class="bi bi-search me-1"></i> Поиск
+                    </a>
+                </li>
+                <!-- Страница загрузки резюме -->
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'upload_resume' %}active{% endif %}" href="{{ url_for('upload_resume') }}">
+                        <i class="bi bi-upload me-1"></i> Загрузить резюме
+                    </a>
+                </li>
+                <!-- Избранное -->
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'favorites' %}active{% endif %}" href="{{ url_for('favorites') }}">
+                        <i class="bi bi-star me-1"></i> Избранное
+                    </a>
+                </li>
+                <!-- История поиска -->
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'history' %}active{% endif %}" href="{{ url_for('history') }}">
+                        <i class="bi bi-clock-history me-1"></i> История
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -127,6 +127,24 @@ body {
 footer {
     background-color: #ffffff;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0; /* Добавление вертикального отступа для лучшего визуального восприятия */
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+/* Стилизация ссылок в футере */
+footer a {
+    color: #333333; /* Задайте желаемый цвет вместо #333333 */
+    text-decoration: none; /* Убирает подчёркивание у ссылок */
+    font-weight: 500; /* Сделать текст ссылок полужирным (опционально) */
+    transition: color 0.3s ease; /* Плавный переход цвета при наведении */
+}
+
+footer a:hover {
+    color: #28a745; /* Цвет при наведении. Замените на желаемый цвет */
+    text-decoration: underline; /* Добавляет подчёркивание при наведении (опционально) */
 }
 
 /* Анимации для плавности */
@@ -174,6 +192,20 @@ footer {
     background-color: #007bff;
     font-size: 0.9rem;
     padding: 0.5em 0.75em;
+}
+
+/* Стилизация модального окна */
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Авторасширение textarea */
+textarea.auto-resize {
+    overflow: hidden;
+    resize: none;
+    min-height: 100px; /* Минимальная высота */
+    transition: height 0.2s ease; /* Плавное изменение высоты */
 }
 
 /* Мобильная адаптивность */
